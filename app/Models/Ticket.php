@@ -13,7 +13,7 @@ class Ticket extends Model
 
     public function userAgent()
     {
-        return $this->belongsTo(User::class, 'user_agent_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function categories()
