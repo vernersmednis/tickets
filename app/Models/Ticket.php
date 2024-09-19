@@ -11,6 +11,16 @@ class Ticket extends Model
 
     protected $fillable = ['title', 'description', 'priority', 'status', 'user_id'];
 
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function activityLogs()
+    {
+        return $this->hasMany(ActivityLog::class);
+    }
+
     public function userAgent()
     {
         return $this->belongsTo(User::class, 'user_id');
