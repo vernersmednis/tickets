@@ -12,9 +12,38 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
+                    <!-- Dashboard Link (only for admins) -->
+                    @if(Auth::user()->role === 'admin')
+                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+                            {{ __('Dashboard') }}
+                        </x-nav-link>
+                    @endif
+
+                    <!-- Tickets Link (Visible to all users) -->
+                    <x-nav-link :href="route('tickets.index')" :active="request()->routeIs('tickets.index')">
+                        {{ __('Tickets') }}
                     </x-nav-link>
+
+                    <!-- Labels Link (Admin only) -->
+                    @if(Auth::user()->role === 'admin')
+                        <x-nav-link :href="route('labels.index')" :active="request()->routeIs('labels.index')">
+                            {{ __('Labels') }}
+                        </x-nav-link>
+                    @endif
+
+                    <!-- Categories Link (Admin only) -->
+                    @if(Auth::user()->role === 'admin')
+                        <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.index')">
+                            {{ __('Categories') }}
+                        </x-nav-link>
+                    @endif
+
+                    <!-- Ticket Logs Link (Admin only) -->
+                    @if(Auth::user()->role === 'admin')
+                        <x-nav-link :href="route('admin.activitylogs.index')" :active="request()->routeIs('admin.activitylogs.index')">
+                            {{ __('Ticket Logs') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -41,7 +70,6 @@
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-
                             <x-dropdown-link :href="route('logout')"
                                     onclick="event.preventDefault();
                                                 this.closest('form').submit();">
@@ -67,9 +95,38 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
+            <!-- Dashboard Link (Admin Only) -->
+            @if(Auth::user()->role === 'admin')
+                <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                    {{ __('Dashboard') }}
+                </x-responsive-nav-link>
+            @endif
+
+            <!-- Tickets Link -->
+            <x-responsive-nav-link :href="route('tickets.index')" :active="request()->routeIs('tickets.index')">
+                {{ __('Tickets') }}
             </x-responsive-nav-link>
+
+            <!-- Labels Link (Admin Only) -->
+            @if(Auth::user()->role === 'admin')
+                <x-responsive-nav-link :href="route('labels.index')" :active="request()->routeIs('labels.index')">
+                    {{ __('Labels') }}
+                </x-responsive-nav-link>
+            @endif
+
+            <!-- Categories Link (Admin Only) -->
+            @if(Auth::user()->role === 'admin')
+                <x-responsive-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.index')">
+                    {{ __('Categories') }}
+                </x-responsive-nav-link>
+            @endif
+            
+            <!-- Ticket Logs Link (Admin only) -->
+            @if(Auth::user()->role === 'admin')
+                <x-responsive-nav-link :href="route('admin.activitylogs.index')" :active="request()->routeIs('admin.activitylogs.index')">
+                    {{ __('Ticket Logs') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
@@ -87,7 +144,6 @@
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-
                     <x-responsive-nav-link :href="route('logout')"
                             onclick="event.preventDefault();
                                         this.closest('form').submit();">

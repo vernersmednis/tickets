@@ -59,12 +59,13 @@
                                 <th class="border border-black">Status</th>
                                 <th class="border border-black">Category</th>
                                 <th class="border border-black">Created At</th>
+                                <th class="border border-black">Actions</th> <!-- Added actions column -->
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($tickets as $ticket)
                                 <tr>
-                                    <td class="border border-black"><a class="text-blue-600 underline" href="{{ route('tickets.show', $ticket->id) }}">{{ $ticket->title }}</a></td>
+                                    <td class="border border-black">{{ $ticket->title }}</td>
                                     <td class="border border-black">{{ ucfirst($ticket->priority) }}</td>
                                     <td class="border border-black">{{ ucfirst($ticket->status) }}</td>
                                     <td class="border border-black">
@@ -73,6 +74,11 @@
                                         @endforeach
                                     </td>
                                     <td class="border border-black">{{ $ticket->created_at->format('Y-m-d') }}</td>
+                                    <td class="border border-black">
+                                        <!-- View and Edit Links -->
+                                        <a class="text-blue-600 underline" href="{{ route('tickets.show', $ticket->id) }}">View</a> | 
+                                        @if(Auth::user()->role === 'admin')<a class="text-blue-600 underline" href="{{ route('tickets.edit', $ticket->id) }}">Edit</a>@endif
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
