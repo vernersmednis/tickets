@@ -1,9 +1,14 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\LabelController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\AdminController;
+use App\Http\Middleware\AdminMiddleware;
+use App\Http\Controllers\ActivityLogController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -14,10 +19,25 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::resource('tickets', TicketController::class)->except(['edit', 'update', 'destroy']);
+    Route::resource('tickets', TicketController::class)->except(['destroy']);
     
     // Route for adding comments to tickets
     Route::post('/tickets/{ticket}/comments', [CommentController::class, 'store'])->name('comments.store');
+    
+    Route::middleware(AdminMiddleware::class)->group(function () {
+        Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+        Route::get('/admin/activitylogs', [ActivityLogController::class, 'index'])->name('admin.activitylogs.index');
+
+        Route::get('/admin/labels', [LabelController::class, 'index'])->name('labels.index');
+        Route::patch('/admin/labels/{label}', [LabelController::class, 'update'])->name('labels.update');
+        Route::post('/admin/labels', [LabelController::class, 'store'])->name('labels.store');
+        Route::delete('/admin/labels/{label}', [LabelController::class, 'destroy'])->name('labels.destroy');
+
+        Route::get('/admin/categories', [CategoryController::class, 'index'])->name('categories.index');
+        Route::patch('/admin/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
+        Route::post('/admin/categories', [CategoryController::class, 'store'])->name('categories.store');
+        Route::delete('/admin/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+    });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
