@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Mockery\Undefined;
 
 class Ticket extends Model
 {
@@ -129,9 +130,12 @@ class Ticket extends Model
             'title' => $validatedData['title'],
             'description' => $validatedData['description'],
             'priority' => $validatedData['priority'],
-            'status' => $validatedData['status'],
-            'user_agent_id' => $validatedData['user_agent_id'], // Assuming this refers to the agent ID
+            'status' => $validatedData['status']
         ]);
+
+        if(isset($validatedData['user_agent_id'])) {
+            $this->update([ 'user_agent_id' => $validatedData['user_agent_id'] ]); // Assuming this refers to the agent ID)
+        } 
 
         // Sync labels if they exist
         if (isset($validatedData['labels']) && !empty($validatedData['labels'])) {
