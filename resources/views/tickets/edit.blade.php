@@ -77,7 +77,6 @@
                             <div class="mb-4">
                                 <label for="user_agent">Assign Agent</label>
                                 <select id="user_agent" name="user_agent_id" class="form-select">
-                                    <option value="">Unassigned</option> <!-- Allow ticket to remain unassigned -->
                                     @foreach($user_agents as $user_agent)
                                         <option value="{{ $user_agent->id }}" {{ $ticket->user_id == $user_agent->id ? 'selected' : '' }}>
                                             {{ $user_agent->name }}
@@ -88,6 +87,17 @@
                         @endif
 
                         <button type="submit" class="border border-black">Update Ticket</button>
+                    
+                        <!-- Error messages -->
+                        <div class="text-red-500">
+                            @error('title'){{ $message }}<br>@enderror
+                            @error('description'){{ $message }}<br>@enderror
+                            @error('priority'){{ $message }}<br>@enderror
+                            @error('status'){{ $message }}<br>@enderror
+                            @error('categories[]'){{ $message }}<br>@enderror
+                            @error('labels[]'){{ $message }}<br>@enderror
+                            @if(Auth::user()->role === 'admin') @error('user_agent_id'){{ $message }}<br>@enderror @endif
+                        </div>
                     </form>
                 </div>
             </div>

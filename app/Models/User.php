@@ -45,4 +45,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // Retrieve all users
+    public static function allUsers()
+    {
+        return self::all();
+    }
 }

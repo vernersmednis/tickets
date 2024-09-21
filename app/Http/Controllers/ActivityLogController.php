@@ -11,8 +11,9 @@ class ActivityLogController extends Controller
      */
     public function index()
     {
-        // Retrieve all ticket-related activity logs in reverse order
-        $logs = ActivityLog::orderBy('created_at', 'desc')->get();
+        // Retrieve ticket-related activity logs in reverse order with pagination
+        $logs = ActivityLog::orderBy('created_at', 'desc')->paginate(10); // Adjust the number as needed
+
         return view('admin.activitylogs.index', compact('logs'));
     }
 }

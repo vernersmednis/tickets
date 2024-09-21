@@ -26,14 +26,14 @@
 
                     <!-- Labels Link (Admin only) -->
                     @if(Auth::user()->role === 'admin')
-                        <x-nav-link :href="route('labels.index')" :active="request()->routeIs('labels.index')">
+                        <x-nav-link :href="route('admin.labels.index')" :active="request()->routeIs('admin.labels.index')">
                             {{ __('Labels') }}
                         </x-nav-link>
                     @endif
 
                     <!-- Categories Link (Admin only) -->
                     @if(Auth::user()->role === 'admin')
-                        <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.index')">
+                        <x-nav-link :href="route('admin.categories.index')" :active="request()->routeIs('admin.categories.index')">
                             {{ __('Categories') }}
                         </x-nav-link>
                     @endif
@@ -97,7 +97,7 @@
         <div class="pt-2 pb-3 space-y-1">
             <!-- Dashboard Link (Admin Only) -->
             @if(Auth::user()->role === 'admin')
-                <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                     {{ __('Dashboard') }}
                 </x-responsive-nav-link>
             @endif
@@ -109,14 +109,14 @@
 
             <!-- Labels Link (Admin Only) -->
             @if(Auth::user()->role === 'admin')
-                <x-responsive-nav-link :href="route('labels.index')" :active="request()->routeIs('labels.index')">
+                <x-responsive-nav-link :href="route('admin.labels.index')" :active="request()->routeIs('admin.labels.index')">
                     {{ __('Labels') }}
                 </x-responsive-nav-link>
             @endif
 
             <!-- Categories Link (Admin Only) -->
             @if(Auth::user()->role === 'admin')
-                <x-responsive-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.index')">
+                <x-responsive-nav-link :href="route('admin.categories.index')" :active="request()->routeIs('admin.categories.index')">
                     {{ __('Categories') }}
                 </x-responsive-nav-link>
             @endif

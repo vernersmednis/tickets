@@ -18,6 +18,7 @@
                     
                     <div class="mb-3">
                         <form method="GET" action="{{ route('tickets.index') }}">
+                            @csrf
                             <!-- Status Filter -->
                             <label for="status">Status</label>
                             <select name="status">
@@ -47,6 +48,7 @@
                             </select>
                 
                             <button type="submit" class="border border-black">Filter</button>
+                            
                         </form>
                     </div>
                 
@@ -59,7 +61,7 @@
                                 <th class="border border-black">Status</th>
                                 <th class="border border-black">Category</th>
                                 <th class="border border-black">Created At</th>
-                                <th class="border border-black">Actions</th> <!-- Added actions column -->
+                                <th class="border border-black">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -75,7 +77,6 @@
                                     </td>
                                     <td class="border border-black">{{ $ticket->created_at->format('Y-m-d') }}</td>
                                     <td class="border border-black">
-                                        <!-- View and Edit Links -->
                                         <a class="text-blue-600 underline" href="{{ route('tickets.show', $ticket->id) }}">View</a> | 
                                         @if(Auth::user()->role === 'admin')<a class="text-blue-600 underline" href="{{ route('tickets.edit', $ticket->id) }}">Edit</a>@endif
                                     </td>
@@ -83,6 +84,11 @@
                             @endforeach
                         </tbody>
                     </table>
+
+                    <!-- Pagination Links -->
+                    <div class="mt-4">
+                        {{ $tickets->appends(request()->except('page'))->links() }}
+                    </div>
                 </div>
             </div>
         </div>
