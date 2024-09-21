@@ -13,6 +13,8 @@ use App\Http\Requests\UpdateTicketRequest;
 use App\Http\Requests\IndexTicketRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Mail\TicketCreated;
+use Illuminate\Support\Facades\Mail;
 
 class TicketController extends Controller
 {
@@ -70,6 +72,9 @@ class TicketController extends Controller
 
         // Log the activity when a new ticket is created
         ActivityLog::logTicketCreation($ticket);
+
+        // Send email to admin
+        Mail::to('admin@admin.com')->send(new TicketCreated($ticket));
 
         // Redirect back to the tickets index with a success message
         return redirect()->route('tickets.index')->with('success', 'Ticket created successfully.');
