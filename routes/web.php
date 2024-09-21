@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\AdminController;
-use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\CheckUserRoleMiddleware;
 use App\Http\Controllers\ActivityLogController;
 
 Route::get('/', function () {
@@ -21,10 +21,18 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
     Route::resource('tickets', TicketController::class)->except(['destroy']);
     
+    Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');
+    Route::get('/tickets/create', [TicketController::class, 'create'])->middleware(CheckUserRoleMiddleware::class.':admin,regular')->name('tickets.create');
+    Route::post('/tickets/store', [TicketController::class, 'store'])->middleware(CheckUserRoleMiddleware::class.':admin,regular')->name('tickets.store');
+    Route::get('/tickets/{ticket}', [TicketController::class, 'show'])->name('tickets.show');
+    Route::get('/tickets/{ticket}/edit', [TicketController::class, 'edit'])->middleware(CheckUserRoleMiddleware::class.':admin,agent')->name('tickets.edit');
+    Route::put('/tickets/{ticket}', [TicketController::class, 'update'])->middleware(CheckUserRoleMiddleware::class.':admin,agent')->name('tickets.update');
+
+
     // Route for adding comments to tickets
     Route::post('/tickets/{ticket}/comments', [CommentController::class, 'store'])->name('comments.store');
     
-    Route::middleware(AdminMiddleware::class)->group(function () {
+    Route::middleware(CheckUserRoleMiddleware::class.':admin')->group(function () {
         Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
         Route::get('/admin/activitylogs', [ActivityLogController::class, 'index'])->name('admin.activitylogs.index');
 

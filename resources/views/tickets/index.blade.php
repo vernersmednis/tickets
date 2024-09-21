@@ -12,9 +12,11 @@
                     <h1>Your Tickets</h1>
                     
                     <!-- Create New Ticket Button -->
-                    <div class="mb-3">
-                        <a href="{{ route('tickets.create') }}" class="border border-black">Create New Ticket</a>
-                    </div>
+                    @if(Auth::user()->role === 'admin' || Auth::user()->role === 'regular')
+                        <div class="mb-3">
+                            <a href="{{ route('tickets.create') }}" class="border border-black">Create New Ticket</a>
+                        </div>
+                    @endif
                     
                     <div class="mb-3">
                         <form method="GET" action="{{ route('tickets.index') }}">
@@ -78,7 +80,7 @@
                                     <td class="border border-black">{{ $ticket->created_at->format('Y-m-d') }}</td>
                                     <td class="border border-black">
                                         <a class="text-blue-600 underline" href="{{ route('tickets.show', $ticket->id) }}">View</a> | 
-                                        @if(Auth::user()->role === 'admin')<a class="text-blue-600 underline" href="{{ route('tickets.edit', $ticket->id) }}">Edit</a>@endif
+                                        @if(Auth::user()->role === 'admin' || Auth::user()->role === 'agent')<a class="text-blue-600 underline" href="{{ route('tickets.edit', $ticket->id) }}">Edit</a>@endif
                                     </td>
                                 </tr>
                             @endforeach
