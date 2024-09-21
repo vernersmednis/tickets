@@ -18,11 +18,11 @@ return new class extends Migration
             $table->text('description'); // required description
             $table->enum('priority', ['low', 'medium', 'high'])->default('low'); // priority
             $table->enum('status', ['open', 'closed'])->default('open'); // status
-            $table->unsignedBigInteger('user_id'); // foreign key to users table
+            $table->unsignedBigInteger('user_agent_id'); // foreign key to users table
             $table->timestamps();
 
             // Foreign key constraint for user agent
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_agent_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

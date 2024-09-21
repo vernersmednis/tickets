@@ -28,15 +28,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
         Route::get('/admin/activitylogs', [ActivityLogController::class, 'index'])->name('admin.activitylogs.index');
 
-        Route::get('/admin/labels', [LabelController::class, 'index'])->name('labels.index');
-        Route::patch('/admin/labels/{label}', [LabelController::class, 'update'])->name('labels.update');
-        Route::post('/admin/labels', [LabelController::class, 'store'])->name('labels.store');
-        Route::delete('/admin/labels/{label}', [LabelController::class, 'destroy'])->name('labels.destroy');
+        Route::get('/admin/labels', [LabelController::class, 'index'])->name('admin.labels.index');
+        Route::patch('/admin/labels/{label}', [LabelController::class, 'update'])->name('admin.labels.update');
+        Route::post('/admin/labels', [LabelController::class, 'store'])->name('admin.labels.store');
+        Route::delete('/admin/labels/{label}', [LabelController::class, 'destroy'])->name('admin.labels.destroy');
 
-        Route::get('/admin/categories', [CategoryController::class, 'index'])->name('categories.index');
-        Route::patch('/admin/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
-        Route::post('/admin/categories', [CategoryController::class, 'store'])->name('categories.store');
-        Route::delete('/admin/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+        Route::get('/admin/categories', [CategoryController::class, 'index'])->name('admin.categories.index');
+        Route::patch('/admin/categories/{category}', [CategoryController::class, 'update'])->name('admin.categories.update');
+        Route::post('/admin/categories', [CategoryController::class, 'store'])->name('admin.categories.store');
+        Route::delete('/admin/categories/{category}', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

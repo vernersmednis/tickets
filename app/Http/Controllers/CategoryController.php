@@ -2,50 +2,54 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
 
 class CategoryController extends Controller
 {
-    // Show all categories
+    // Display a list of all categories
     public function index()
     {
-        $categories = Category::all(); // Fetch all categories from the database
-        return view('categories.index', compact('categories')); // Pass categories to the view
+        // Fetch all categories using the model method
+        $categories = Category::getAllCategories();
+        
+        // Pass the retrieved categories to the view for rendering
+        return view('admin.categories.index', compact('categories'));
     }
 
-    // Store a new category
-    public function store(Request $request)
+    // Store a new category in the database
+    public function store(StoreCategoryRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name', // Validate input
-        ]);
+        // Retrieve and validate data from the incoming request
+        $validatedData = $request->validated();
 
-        Category::create([
-            'name' => $request->name,
-        ]);
+        // Create a new category using the model method
+        Category::createCategory($validatedData);
 
-        return redirect()->route('categories.index')->with('success', 'Category created successfully.');
+        // Redirect to the categories index with a success message
+        return redirect()->route('admin.categories.index')->with('success', 'Category created successfully.');
     }
 
-    // Update an existing category
-    public function update(Request $request, Category $category)
+    // Update an existing category in the database
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name,' . $category->id, // Validate input
-        ]);
+        // Retrieve and validate data from the incoming request
+        $validatedData = $request->validated();
+        
+        // Update the existing category using the model method
+        $category->updateCategory($validatedData);
 
-        $category->update([
-            'name' => $request->name,
-        ]);
-
-        return redirect()->route('categories.index')->with('success', 'Category updated successfully.');
+        // Redirect to the categories index with a success message
+        return redirect()->route('admin.categories.index')->with('success', 'Category updated successfully.');
     }
 
-    // Delete a category
+    // Delete a specified category from the database
     public function destroy(Category $category)
     {
+        // Remove the category from the database
         $category->delete();
 
-        return redirect()->route('categories.index')->with('success', 'Category deleted successfully.');
+        // Redirect to the categories index with a success message
+        return redirect()->route('admin.categories.index')->with('success', 'Category deleted successfully.');
     }
 }

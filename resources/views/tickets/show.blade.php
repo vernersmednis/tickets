@@ -45,6 +45,12 @@
                         <div>
                             <textarea name="content" rows="4" class="w-full border border-gray-300"></textarea>
                         </div>
+                        
+                        <!-- Error messages -->
+                        <div class="text-red-500">
+                            <br>
+                            @error('content'){{ $message }}<br>@enderror
+                        </div>
                         <button type="submit" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Submit</button>
                     </form>
                 </div>

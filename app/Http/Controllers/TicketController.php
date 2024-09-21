@@ -8,220 +8,145 @@ use App\Models\User;
 use App\Models\Label;
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreTicketRequest;
+use App\Http\Requests\UpdateTicketRequest;
+use App\Http\Requests\IndexTicketRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class TicketController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the resource (tickets).
+     * Regular and agent users can see only their tickets, while admins can see all tickets.
+     * Filters such as status, priority, and category can be applied.
      */
-    public function index(Request $request)
+    public function index(Request $request) // Use IndexTicketRequest to handle incoming request filters
     {
-        // Validate the request data
-        $validator = Validator::make($request->all(), [
-            'status' => 'nullable|string|in:open,closed', // Adjust based on your status options
-            'priority' => 'nullable|string|in:low,medium,high', // Adjust based on your priority options
-            'category_id' => 'nullable|exists:categories,id',
-        ]);
-
-        // Check if validation fails
-        if ($validator->fails()) {
-            // Redirect or return a response with validation errors
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
+        // Get the currently authenticated user
         $user = Auth::user();
 
-        // Check if the user is an admin
-        if ($user->role === 'admin') {
-            // Admin sees all tickets
-            $tickets = Ticket::query();
-        } else {
-            // Regular users only see their own tickets
-            $tickets = Ticket::where('user_id', $user->id);
-        }
+        // Retrieve tickets filtered by user role (admin sees all, others see their own)
+        // Filters include status, priority, and category
+        $tickets = Ticket::filter($user, $request->only(['status', 'priority', 'category_id']))
+            ->paginate(10); // Adjust the number as needed;
+        // Fetch all categories to pass to the view
+        $categories = Category::allCategories();
 
-        // Apply filters for status, priority, and category
-        $tickets = $tickets
-            ->when($request->status, function($query) use ($request) {
-                $query->where('status', $request->status);
-            })
-            ->when($request->priority, function($query) use ($request) {
-                $query->where('priority', $request->priority);
-            })
-            ->when($request->category_id, function($query) use ($request) {
-                $query->whereHas('categories', function($query) use ($request) {
-                    $query->where('categories.id', $request->category_id);
-                });
-            })
-            ->get();
-
-        $categories = Category::all();
-
+        // Return the 'tickets.index' view with the tickets and categories
         return view('tickets.index', compact('tickets', 'categories'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new ticket.
+     * This fetches necessary data such as categories, users, and labels.
      */
     public function create()
     {
-        $categories = Category::all(); // Fetch categories to pass to the view
-        $users = User::all();
-        $labels = Label::all();  // Fetch all labels to assign to the ticket
+        // Fetch all available categories
+        $categories = Category::allCategories();
+        
+        // Fetch all users (could be for assigning the ticket to a specific user)
+        $users = User::allUsers();
+        
+        // Fetch all labels (to tag tickets with specific labels)
+        $labels = Label::allLabels();
 
-        // Display the form for creating a new ticket
-        return view('tickets.create', compact( 'categories', 'users', 'labels'));
+        // Return the 'tickets.create' view with categories, users, and labels
+        return view('tickets.create', compact('categories', 'users', 'labels'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created ticket in the database.
+     * Validates the input, creates the ticket, and logs the creation activity.
      */
-    public function store(Request $request)
+    public function store(StoreTicketRequest $request)
     {
+        // Validate the request data
+        $validatedData = $request->validated();
 
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'priority' => 'required|in:low,medium,high',
-            'status' => 'required|in:open,closed',
-            'category_id' => 'nullable|exists:categories,id',
-            'agent_id' => 'nullable|exists:users,id', // Validate agent
-            'labels' => 'nullable|array',             // Allow multiple labels
-            'labels.*' => 'exists:labels,id',          // Ensure labels exist
-        ]);
+        // Create a new ticket and sync labels and categories with the given validated data
+        $ticket = Ticket::createTicket($validatedData, auth()->id());
 
-        $ticket = Ticket::create([
-            'title' => $request->title,
-            'description' => $request->description, // Include description in the created ticket
-            'priority' => $request->priority,
-            'status' => $request->status,
-            'user_id' => auth()->id(), // Assuming the user is logged in
-        ]);
-        
-        // Sync labels and categories
-        $ticket->labels()->sync($request->labels);
-        $ticket->categories()->sync($request->categories);
+        // Log the activity when a new ticket is created
+        ActivityLog::logTicketCreation($ticket);
 
-        $activityDescription = Auth::user()->name.' created a ticket "'.$ticket->title.'" with priority "'.$ticket->priority.'" and status "'.$ticket->status.'"';
-        $activityLog = ActivityLog::create([
-            'ticket_id' => $ticket->id,
-            'description' => $activityDescription,
-        ]);
-
+        // Redirect back to the tickets index with a success message
         return redirect()->route('tickets.index')->with('success', 'Ticket created successfully.');
     }
 
     /**
-     * Display the specified resource.
+     * Display the details of a specific ticket.
+     * Ensures the user is authorized to view the ticket.
      */
     public function show(Ticket $ticket)
     {
-        // Make sure the user can only view their own tickets
-        if (Auth::id() !== $ticket->user_id && Auth::user()->role !== 'admin') {
+        // Ensure the user can only view their own tickets, unless they are an admin
+        if (Auth::id() !== $ticket->user_agent_id && Auth::user()->role !== 'admin') {
+            // If unauthorized, throw a 403 Forbidden error
             abort(403, 'Unauthorized');
         }
-    
-        // Load the ticket's comments in default order and activity logs in reverse order
-        $ticket->load(['comments', 'activityLogs' => function ($query) {
-            $query->orderBy('created_at', 'desc'); // Order activity logs by created_at in descending order
-        }]);
-    
+
+        // Load related data such as comments and activity logs for the ticket
+        $ticket->loadWithRelations();
+
+        // Return the 'tickets.show' view with the ticket details
         return view('tickets.show', compact('ticket'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing a specific ticket.
+     * Ensures the user is authorized to edit the ticket.
      */
-
     public function edit(Ticket $ticket)
     {
-        $categories = Category::all();
-        $user_agents = User::all();
-        $labels = Label::all();  // Fetch all labels to assign to the ticket
+        // Ensure the user can only edit their own tickets, unless they are an admin
+        if (Auth::id() !== $ticket->user_agent_id && Auth::user()->role !== 'admin') {
+            // If unauthorized, throw a 403 Forbidden error
+            abort(403, 'Unauthorized');
+        }
+
+        // Fetch all available categories for selection in the form
+        $categories = Category::allCategories();
+        
+        // Fetch all users (e.g., agents) for potential assignment to the ticket
+        $user_agents = User::allUsers();
+        
+        // Fetch all labels to allow tagging of the ticket
+        $labels = Label::allLabels();
+
+        // Return the 'tickets.edit' view with the ticket, categories, users, and labels
         return view('tickets.edit', compact('ticket', 'categories', 'user_agents', 'labels'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update an existing ticket in the database.
+     * Ensures the user is authorized to update the ticket.
      */
-    public function update(Request $request, Ticket $ticket)
+    public function update(UpdateTicketRequest $request, Ticket $ticket)
     {
-        // Validate the request
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'priority' => 'required|in:low,medium,high',
-            'status' => 'required|in:open,closed',
-            'category_id' => 'nullable|exists:categories,id',
-            'agent_id' => 'nullable|exists:users,id',
-            'labels' => 'nullable|array',
-            'labels.*' => 'exists:labels,id',
-        ]);
-
-        // Get the original attributes
-        $originalAttributes = $ticket->getOriginal();
-
-        // Update ticket details
-        $ticket->update([
-            'title' => $request->title,
-            'description' => $request->description,
-            'priority' => $request->priority,
-            'status' => $request->status,
-            'user_id' => $request->user_agent_id,
-        ]);
-
-        // Sync labels and categories
-        $labelSync = $ticket->labels()->sync($request->labels);
-        $categorySync = $ticket->categories()->sync($request->categories);
-
-        // Build activity description based on changed attributes
-        $changedAttributes = [];
-        foreach (['title', 'description', 'priority', 'status'] as $attribute) {
-            if ($originalAttributes[$attribute] !== $ticket->$attribute) {
-                $changedAttributes[] = ucfirst($attribute) . ' changed from "' . $originalAttributes[$attribute] . '" to "' . $ticket->$attribute . '"';
-            }
+        // Ensure the user can only update their own tickets, unless they are an admin
+        if (Auth::id() !== $ticket->user_agent_id && Auth::user()->role !== 'admin') {
+            // If unauthorized, throw a 403 Forbidden error
+            abort(403, 'Unauthorized');
         }
 
-        // Fetch added and removed label names
-        if (!empty($labelSync['attached'])) {
-            $addedLabels = \App\Models\Label::whereIn('id', $labelSync['attached'])->pluck('name')->toArray();
-            $changedAttributes[] = 'Labels added: "' . implode(', ', $addedLabels) . '"';
-        }
-        if (!empty($labelSync['detached'])) {
-            $removedLabels = \App\Models\Label::whereIn('id', $labelSync['detached'])->pluck('name')->toArray();
-            $changedAttributes[] = 'Labels removed: "' . implode(', ', $removedLabels) . '"';
-        }
+        // Validate the request data
+        $validatedData = $request->validated();
 
-        // Fetch added and removed category names
-        if (!empty($categorySync['attached'])) {
-            $addedCategories = \App\Models\Category::whereIn('id', $categorySync['attached'])->pluck('name')->toArray();
-            $changedAttributes[] = 'Categories added: "' . implode(', ', $addedCategories) . '"';
-        }
-        if (!empty($categorySync['detached'])) {
-            $removedCategories = \App\Models\Category::whereIn('id', $categorySync['detached'])->pluck('name')->toArray();
-            $changedAttributes[] = 'Categories removed: "' . implode(', ', $removedCategories) . '"';
-        }
+        // Update the ticket with the validated data
+        $ticket->updateTicket($validatedData);
 
-        // Construct the final activity description
-        $activityDescription = Auth::user()->name . ' edited a ticket "' . $ticket->title . '" with changes: ' . implode(', ', $changedAttributes);
-
-        // Log the activity
-        ActivityLog::create([
-            'ticket_id' => $ticket->id,
-            'description' => $activityDescription,
-        ]);
-
+        // Redirect to the ticket details page with a success message
         return redirect()->route('tickets.show', $ticket->id)->with('success', 'Ticket updated successfully.');
     }
 
-
     /**
-     * Remove the specified resource from storage.
+     * Remove a ticket from the database (soft delete or permanent delete, depending on implementation).
+     * Currently not implemented.
      */
     public function destroy(string $id)
     {
-        //
+        // Delete logic would go here, but it is not currently implemented
     }
 }

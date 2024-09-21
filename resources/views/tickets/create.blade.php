@@ -71,6 +71,16 @@
 
                         <!-- Submit Button -->
                         <button type="submit" class="border border-black">Create Ticket</button>
+                    
+                        <!-- Error messages -->
+                        <div class="text-red-500">
+                            @error('title'){{ $message }}<br>@enderror
+                            @error('description'){{ $message }}<br>@enderror
+                            @error('priority'){{ $message }}<br>@enderror
+                            @error('status'){{ $message }}<br>@enderror
+                            @error('categories[]'){{ $message }}<br>@enderror
+                            @error('labels[]'){{ $message }}<br>@enderror
+                        </div>
                     </form>
                 </div>
             </div>

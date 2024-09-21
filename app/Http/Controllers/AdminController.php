@@ -1,5 +1,4 @@
 <?php
-// AdminController.php
 
 namespace App\Http\Controllers;
 
@@ -10,16 +9,14 @@ class AdminController extends Controller
 {
     public function dashboard()
     {
-        // Get ticket counts
-        $totalTickets = Ticket::count();
-        $openTickets = Ticket::where('status', 'open')->count();
-        $closedTickets = Ticket::where('status', 'closed')->count();
+        // Get ticket counts using the model method
+        $ticketCounts = Ticket::getTicketCounts();
 
-        return view('admin.dashboard', compact('totalTickets', 'openTickets', 'closedTickets'));
-    }
-
-    public function logs()
-    {
-
+        // Display them
+        return view('admin.dashboard', [
+            'totalTickets' => $ticketCounts['total'],
+            'openTickets' => $ticketCounts['open'],
+            'closedTickets' => $ticketCounts['closed'],
+        ]);
     }
 }

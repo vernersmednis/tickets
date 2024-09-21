@@ -1,52 +1,55 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Label;
+use App\Http\Requests\StoreLabelRequest;
+use App\Http\Requests\UpdateLabelRequest;
 
 class LabelController extends Controller
 {
-    // Show all labels
+    // Display a list of all labels
     public function index()
     {
-        $labels = Label::all(); // Fetch all labels from the database
-        return view('labels.index', compact('labels')); // Pass labels to the view
+        // Fetch all labels using the model method
+        $labels = Label::getAllLabels();
+        
+        // Pass the retrieved labels to the view for rendering
+        return view('admin.labels.index', compact('labels'));
     }
 
-    // Store a new label
-    public function store(Request $request)
+    // Store a new label in the database
+    public function store(StoreLabelRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:labels,name', // Validate input
-        ]);
+        // Retrieve and validate data from the incoming request
+        $validatedData = $request->validated();
 
-        Label::create([
-            'name' => $request->name,
-        ]);
+        // Create a new label using the model method
+        Label::createLabel($validatedData);
 
-        return redirect()->route('labels.index')->with('success', 'Label created successfully.');
+        // Redirect to the labels index with a success message
+        return redirect()->route('admin.labels.index')->with('success', 'Label created successfully.');
     }
 
-    // Update an existing label
-    public function update(Request $request, Label $label)
+    // Update an existing label in the database
+    public function update(UpdateLabelRequest $request, Label $label)
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:labels,name,' . $label->id, // Validate input
-        ]);
+        // Retrieve and validate data from the incoming request
+        $validatedData = $request->validated();
 
-        $label->update([
-            'name' => $request->name,
-        ]);
+        // Update the existing label using the model method
+        $label->updateLabel($validatedData);
 
-        return redirect()->route('labels.index')->with('success', 'Label updated successfully.');
+        // Redirect to the labels index with a success message
+        return redirect()->route('admin.labels.index')->with('success', 'Label updated successfully.');
     }
 
-    // Delete a label
+    // Delete a specified label from the database
     public function destroy(Label $label)
     {
+        // Remove the label from the database
         $label->delete();
 
-        return redirect()->route('labels.index')->with('success', 'Label deleted successfully.');
+        // Redirect to the labels index with a success message
+        return redirect()->route('admin.labels.index')->with('success', 'Label deleted successfully.');
     }
 }
