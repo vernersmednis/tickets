@@ -11,7 +11,7 @@ use App\Http\Middleware\CheckUserRoleMiddleware;
 use App\Http\Controllers\ActivityLogController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/tickets');
 });
 
 Route::get('/dashboard', function () {
