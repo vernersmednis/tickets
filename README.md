@@ -1,66 +1,111 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# NiceCRM
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+NiceCRM is a portfolio project showcasing basic functionality for managing content. This project includes additional features like email notifications and multi-language support.
 
-## About Laravel
+The original idea for this project was inspired by [Laravel Daily's support ticket system project](https://laraveldaily.com/post/demo-project-laravel-support-ticket-system).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**Features:**
+- Described in [Laravel Daily's support ticket system project](https://laraveldaily.com/post/demo-project-laravel-support-ticket-system).
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Testing Email Notifications
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+To test email notifications, follow these steps:
 
-## Learning Laravel
+1. **Register and Set Up Mailtrap:**
+   - Go to [Mailtrap](https://mailtrap.io) and register or log in (you can use your Gmail account for instant login).
+   - In the left sidebar, go to **Email Testing** > **Inboxes**.
+   - Create a new project and an inbox, then open the inbox.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+2. **Configure Mailtrap Settings:**
+   - In the inbox, go to the **Code Samples** section and select **PHP** > **Laravel 9+**.
+   - Copy the provided code sample and update the `.env` file in the `NiceCRM` directory with the settings from Mailtrap. The configuration should look like:
+     ```
+     MAIL_MAILER=smtp
+     MAIL_HOST=sandbox.smtp.mailtrap.io
+     MAIL_PORT=2525
+     MAIL_USERNAME=<your_username>
+     MAIL_PASSWORD=<your_password>
+     ```
+     Replace `<your_username>` and `<your_password>` with the actual values from Mailtrap.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+3. **Verify Email Notification:**
+   - Create a new ticket in the application and check the Mailtrap inbox for the notification email.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Getting Started on Windows
 
-## Laravel Sponsors
+### Prerequisites
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+1. **Download and Install Herd:**
+   - Download the latest free version of Herd from the [Herd website](https://herd.laravel.com/windows) and install it.
 
-### Premium Partners
+2. **Download and Install MySQL:**
+   - Download `mysql-installer-community-8.0.39.0.msi` from the [MySQL website](https://dev.mysql.com/downloads/installer/).
+   - Choose the **Full** setup type and follow the installation wizard.
+   - During the installation, set the MySQL Root Password to "root". Update the `DB_PASSWORD` in the `.env` file if you use a different password.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### Project Setup
 
-## Contributing
+1. **Clone the Repository:**
+   - Select a directory for your Laravel projects.
+   - Run:
+     ```bash
+     laravel new tickets
+     ```
+   - Select the Breeze starter kit with the following options:
+     - Blade Breeze stack (Blade with Alpine)
+     - No dark mode support
+     - Pest testing framework
+     - Do not initialize a Git repository
+     - Select MySQL for the database
+     - Do not run default database migrations
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+2. **Set Up Git:**
+   - In the `tickets` directory, run:
+     ```bash
+     git init
+     git remote add origin https://github.com/vernersmednis/tickets.git
+     git fetch origin
+     git checkout main -f
+     git fetch
+     git reset --hard origin/main
+     ```
 
-## Code of Conduct
+3. **Set Up the Project Server in Herd:**
+   - In the PHP tab, select version 8.3 (8.3.3).
+   - In the General tab, add the path to the `tickets-parent-directory`.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+4. **Set Up the Database:**
+   - Ensure the MySQL bin directory is in your system's `PATH` environment variable:
+     - Navigate to **Search** > **Edit the system environment variables** > **Environment Variables** > **User variables for `your_username`** > **Path** > **Edit**.
+     - Confirm that `C:\Program Files\MySQL\MySQL Server 8.0\bin` is listed.
+   - Run `net start MySQL80` in Command Prompt (opened with **Run as administrator**).
+   - Open **Local instance MYSQL80** in MySQL Workbench.
+   - Run the following query to create the database:
+     ```sql
+     CREATE DATABASE nicecrm;
+     ```
+   - In the `tickets` directory, run:
+     ```bash
+     php artisan migrate
+     ```
+     or
+     ```bash
+     php artisan migrate:fresh
+     ```
+     then:
+     ```bash
+     php artisan db:seed
+     ```
 
-## Security Vulnerabilities
+5. **Install Dependencies and Run the Application:**
+   - Run:
+     ```bash
+     npm install
+     composer require yajra/laravel-datatables-oracle
+     npm run dev
+     ```
+   - Open your browser and navigate to `http://tickets.test` to explore the application. Ensure that Herd and MySQL80 are running.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Feel free to modify the `.env` file, database settings, or any configurations as needed for your environment.
