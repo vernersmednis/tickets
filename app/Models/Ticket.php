@@ -66,6 +66,9 @@ class Ticket extends Model
     // Scope for filtering tickets based on user role and provided filters
     public function scopeFilter(Builder $query, $user, array $filters)
     {
+        // Eager load categories to avoid N+1 problem
+        $query->with('categories');
+        
         // If the user is not an admin, filter tickets by user ID
         if ($user->role !== 'admin') {
             $query->where('user_agent_id', $user->id);
