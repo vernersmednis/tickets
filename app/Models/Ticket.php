@@ -83,7 +83,9 @@ class Ticket extends Model
                 $query->where('priority', $filters['priority']);
             })
             ->when($filters['category_id'] ?? null, function ($query) use ($filters) {
-                $query->whereHas('categories');
+                $query->whereHas('categories', function ($query) use ($filters) {
+                    $query->where('categories.id', $filters['category_id']);
+                });
             });
     }
 
