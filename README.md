@@ -6,6 +6,10 @@ The original idea for this project was inspired by [Laravel Daily's support tick
 
 **Features:**
 - Described in [Laravel Daily's support ticket system project](https://laraveldaily.com/post/demo-project-laravel-support-ticket-system).
+- **User Roles & Permissions:**
+  - **Regular Users:** Can create, view, and edit their own tickets
+  - **Admins:** Can create tickets, categories, labels, and view everyone's tickets; full system access
+  - **Admin Account:** `admin@admin.com` / `password`
 
 
 ---

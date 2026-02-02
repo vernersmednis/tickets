@@ -12,7 +12,7 @@ class StoreTicketRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Auth::user()->role === 'admin' || Auth::user()->role === 'agent'; // Allow only admins and agents to make this request
+        return Auth::user()->role === 'admin' || Auth::user()->role === 'agent' || Auth::user()->role === 'regular'; // Allow admins, agents, and regular users to create tickets
     }
 
     /**
