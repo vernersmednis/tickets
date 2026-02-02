@@ -22,8 +22,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('tickets', TicketController::class)->except(['destroy']);
     
     Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');
-    Route::get('/tickets/create', [TicketController::class, 'create'])->middleware(CheckUserRoleMiddleware::class.':admin,regular')->name('tickets.create');
-    Route::post('/tickets/store', [TicketController::class, 'store'])->middleware(CheckUserRoleMiddleware::class.':admin,regular')->name('tickets.store');
+    Route::get('/tickets/create', [TicketController::class, 'create'])->middleware(CheckUserRoleMiddleware::class.':admin,agent,regular')->name('tickets.create');
+    Route::post('/tickets/store', [TicketController::class, 'store'])->middleware(CheckUserRoleMiddleware::class.':admin,agent,regular')->name('tickets.store');
     Route::get('/tickets/{ticket}', [TicketController::class, 'show'])->name('tickets.show');
     Route::get('/tickets/{ticket}/edit', [TicketController::class, 'edit'])->middleware(CheckUserRoleMiddleware::class.':admin,agent')->name('tickets.edit');
     Route::put('/tickets/{ticket}', [TicketController::class, 'update'])->middleware(CheckUserRoleMiddleware::class.':admin,agent')->name('tickets.update');

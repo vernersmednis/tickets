@@ -11,7 +11,7 @@
                 <h1 class="text-2xl font-bold mb-4">Your Tickets</h1>
                 
                 <!-- Create New Ticket Button -->
-                @if(Auth::user()->role === 'admin' || Auth::user()->role === 'regular')
+                @if(Auth::user()->role === 'admin' || Auth::user()->role === 'agent' || Auth::user()->role === 'regular')
                     <div class="mb-4">
                         <a href="{{ route('tickets.create') }}" class="inline-block bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition">Create New Ticket</a>
                     </div>
