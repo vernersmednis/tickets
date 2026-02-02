@@ -31,11 +31,17 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
+# Copy composer files first (for better caching)
+COPY composer.json composer.lock ./
+
+# Install PHP dependencies (use --no-scripts to avoid artisan errors before full copy)
+RUN composer install --no-dev --optimize-autoloader --no-scripts
+
 # Copy all project files into the container
 COPY . .
 
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader
+# Run composer scripts now that all files are present
+RUN composer dump-autoload --optimize
 
 # Install Node dependencies and build frontend assets
 RUN npm install && npm run build
