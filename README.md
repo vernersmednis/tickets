@@ -12,78 +12,24 @@ The original idea for this project was inspired by [Laravel Daily's support tick
 
 ## Running with Docker (Easiest Way)
 
-If you have Docker Desktop installed, you can run the entire application with one command:
+If you have Docker Desktop installed, you can run the application with just two commands!
 
 ### Prerequisites
 
-1. **Install Docker Desktop:**
-   - Download from [docker.com](https://www.docker.com/products/docker-desktop/) and install
-   - Make sure Docker Desktop is running (whale icon in system tray)
+- **Install Docker Desktop:**
+  - Download from [docker.com](https://www.docker.com/products/docker-desktop/) and install
+  - Make sure Docker Desktop is running (whale icon in system tray)
 
-### Quick Start
+### Quick Start (Pre-built Image)
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/vernersmednis/tickets.git
-   cd tickets
-   ```
-
-2. **Create a `.env` file** (copy from example or create new):
-   ```bash
-   cp .env.example .env
-   ```
-
-3. **Install PHP dependencies** (required to generate APP_KEY):
-   ```bash
-   composer install
-   ```
-
-4. **Generate an APP_KEY** (if not already set):
-   ```bash
-   php artisan key:generate --show
-   ```
-   Add the generated key to your `.env` file.
-
-5. **Start the application:**
-   ```bash
-   docker-compose up --build
-   ```
-
-6. **Run database migrations** (in a new terminal):
-   ```bash
-   docker exec -it tickets-app php artisan migrate:fresh
-   docker exec -it tickets-app php artisan db:seed
-   ```
-
-7. **Open your browser:**
-   - App: [http://localhost:8000](http://localhost:8000)
-   - Database: `localhost:3307` (user: `tickets_user`, password: `secret`)
-
-### Stopping the Application
-
-```bash
-docker-compose down
-```
-
-### Reset Everything (including database)
-
-```bash
-docker-compose down -v
-docker-compose up --build
-```
-
----
-
-## Pulling from GitHub Container Registry
-
-If someone has already built and pushed the image, you can run it directly:
+Just pull and run — no PHP, Composer, or Node.js needed on your computer:
 
 ```bash
 docker pull ghcr.io/vernersmednis/tickets:latest
 docker run -p 8000:80 ghcr.io/vernersmednis/tickets:latest
 ```
 
-Then open [http://localhost:8000](http://localhost:8000) in your browser.
+Then open [http://localhost:8000](http://localhost:8000) in your browser. That's it!
 
 ---
 

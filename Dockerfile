@@ -5,7 +5,7 @@
 # It's simple and easy to understand for beginners.
 
 # Start from official PHP image with Apache
-FROM php:8.4-apache
+FROM php:8.2-apache
 
 # Install system dependencies and PHP extensions Laravel needs
 RUN apt-get update && apt-get install -y \
