@@ -7,6 +7,81 @@ The original idea for this project was inspired by [Laravel Daily's support tick
 **Features:**
 - Described in [Laravel Daily's support ticket system project](https://laraveldaily.com/post/demo-project-laravel-support-ticket-system).
 
+
+---
+
+## Running with Docker (Easiest Way)
+
+If you have Docker Desktop installed, you can run the entire application with one command:
+
+### Prerequisites
+
+1. **Install Docker Desktop:**
+   - Download from [docker.com](https://www.docker.com/products/docker-desktop/) and install
+   - Make sure Docker Desktop is running (whale icon in system tray)
+
+### Quick Start
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/vernersmednis/tickets.git
+   cd tickets
+   ```
+
+2. **Create a `.env` file** (copy from example or create new):
+   ```bash
+   cp .env.example .env
+   ```
+
+3. **Generate an APP_KEY** (if not already set):
+   ```bash
+   php artisan key:generate --show
+   ```
+   Add the generated key to your `.env` file.
+
+4. **Start the application:**
+   ```bash
+   docker-compose up --build
+   ```
+
+5. **Run database migrations** (in a new terminal):
+   ```bash
+   docker exec -it tickets-app php artisan migrate
+   docker exec -it tickets-app php artisan db:seed
+   ```
+
+6. **Open your browser:**
+   - App: [http://localhost:8000](http://localhost:8000)
+   - Database: `localhost:3307` (user: `tickets_user`, password: `secret`)
+
+### Stopping the Application
+
+```bash
+docker-compose down
+```
+
+### Reset Everything (including database)
+
+```bash
+docker-compose down -v
+docker-compose up --build
+```
+
+---
+
+## Pulling from GitHub Container Registry
+
+If someone has already built and pushed the image, you can run it directly:
+
+```bash
+docker pull ghcr.io/vernersmednis/tickets:latest
+docker run -p 8000:80 ghcr.io/vernersmednis/tickets:latest
+```
+
+Then open [http://localhost:8000](http://localhost:8000) in your browser.
+
+---
+
 ## Testing Email Notifications
 
 To test email notifications, follow these steps:

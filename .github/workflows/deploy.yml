@@ -1,0 +1,71 @@
+# ===========================================
+# ENTRY-LEVEL DEPLOY TO GITHUB CONTAINER REGISTRY
+# ===========================================
+# This workflow builds and pushes your Docker image to GitHub Container Registry.
+# It runs when you push to the 'ghcr' branch.
+#
+# How to use:
+#   1. Create a branch called 'ghcr': git checkout -b ghcr
+#   2. Push to that branch: git push origin ghcr
+#   3. Your image will be at: ghcr.io/YOUR_USERNAME/tickets:latest
+#
+# To pull your image:
+#   docker pull ghcr.io/YOUR_USERNAME/tickets:latest
+
+name: Deploy to GHCR
+
+# When to run this workflow
+on:
+  push:
+    branches:
+      - ghcr  # Only runs when you push to the 'ghcr' branch
+
+# Permissions needed to push to GitHub Container Registry
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    name: Build and Push to GHCR
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out your code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Log in to GitHub Container Registry
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Step 3: Set up Docker Buildx (for better builds)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Step 4: Build and push the Docker image
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/tickets:latest
+            ghcr.io/${{ github.repository_owner }}/tickets:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Step 5: Print success message
+      - name: Print image URL
+        run: |
+          echo "✅ Docker image pushed successfully!"
+          echo "📦 Image URL: ghcr.io/${{ github.repository_owner }}/tickets:latest"
+          echo ""
+          echo "To pull and run your image:"
+          echo "  docker pull ghcr.io/${{ github.repository_owner }}/tickets:latest"
+          echo "  docker run -p 8000:80 ghcr.io/${{ github.repository_owner }}/tickets:latest"
