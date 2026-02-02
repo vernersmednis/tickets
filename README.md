@@ -13,6 +13,7 @@ The original idea for this project was inspired by [Laravel Daily's support tick
   - **Admin Account:** `admin@admin.com` / `password`
 
 
+
 ---
 
 ## Running with Docker (Easiest Way)
