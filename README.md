@@ -33,24 +33,29 @@ If you have Docker Desktop installed, you can run the entire application with on
    cp .env.example .env
    ```
 
-3. **Generate an APP_KEY** (if not already set):
+3. **Install PHP dependencies** (required to generate APP_KEY):
+   ```bash
+   composer install
+   ```
+
+4. **Generate an APP_KEY** (if not already set):
    ```bash
    php artisan key:generate --show
    ```
    Add the generated key to your `.env` file.
 
-4. **Start the application:**
+5. **Start the application:**
    ```bash
    docker-compose up --build
    ```
 
-5. **Run database migrations** (in a new terminal):
+6. **Run database migrations** (in a new terminal):
    ```bash
-   docker exec -it tickets-app php artisan migrate
+   docker exec -it tickets-app php artisan migrate:fresh
    docker exec -it tickets-app php artisan db:seed
    ```
 
-6. **Open your browser:**
+7. **Open your browser:**
    - App: [http://localhost:8000](http://localhost:8000)
    - Database: `localhost:3307` (user: `tickets_user`, password: `secret`)
 
