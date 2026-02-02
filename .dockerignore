@@ -1,0 +1,45 @@
+# ===========================================
+# FILES TO IGNORE WHEN BUILDING DOCKER IMAGE
+# ===========================================
+# These files won't be copied into the container.
+# This makes the build faster and the image smaller.
+
+# Dependencies (will be installed fresh in container)
+/node_modules
+/vendor
+
+# Environment files (use docker-compose environment instead)
+.env
+.env.backup
+.env.production
+
+# IDE and editor files
+.idea
+.vscode
+*.swp
+*.swo
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker files (not needed inside container)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Logs and cache
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+
+# Testing
+/tests
+phpunit.xml
+.phpunit.result.cache
+
+# Documentation
+README.md
+README.laravel.md

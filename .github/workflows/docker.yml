@@ -1,0 +1,49 @@
+# ===========================================
+# ENTRY-LEVEL GITHUB ACTIONS WORKFLOW FOR DOCKER
+# ===========================================
+# This workflow builds your Docker image when you push code.
+# It's a simple starting point for CI/CD.
+
+name: Build Docker Image
+
+# When to run this workflow
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out your code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Docker Buildx (for better builds)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Step 3: Build the Docker image
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false  # Set to true if you want to push to a registry
+          tags: tickets-app:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Step 4: (Optional) Run a quick test to make sure the image works
+      - name: Test image builds successfully
+        run: |
+          docker build -t tickets-app:test .
+          echo "✅ Docker image built successfully!"
