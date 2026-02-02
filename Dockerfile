@@ -32,10 +32,10 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 
 # Copy composer files first (for better caching)
-COPY composer.json composer.lock ./
+COPY composer.json ./
 
-# Install PHP dependencies (use --no-scripts to avoid artisan errors before full copy)
-RUN composer install --no-dev --optimize-autoloader --no-scripts
+# Install PHP dependencies (update instead of install to regenerate lock file for PHP 8.4)
+RUN composer update --no-dev --optimize-autoloader --no-scripts
 
 # Copy all project files into the container
 COPY . .
