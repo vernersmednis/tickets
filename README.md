@@ -25,9 +25,24 @@ If you have Docker Desktop installed, you can run the application with just two 
 Just pull and run — no PHP, Composer, or Node.js needed on your computer:
 
 ```bash
+# Pull the latest image
 docker pull ghcr.io/vernersmednis/tickets:latest
-docker run -p 8000:80 ghcr.io/vernersmednis/tickets:latest
+
+# Run with your environment variables (adjust DB credentials as needed)
+docker run -p 8000:80 \
+  -e APP_KEY=base64:xxxxxxxxx+x/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx= \
+  -e APP_ENV=local \
+  -e APP_DEBUG=false \
+  -e DB_CONNECTION=mysql \
+  -e DB_HOST=host.docker.internal \
+  -e DB_PORT=3306 \
+  -e DB_DATABASE=tickets \
+  -e DB_USERNAME=root \
+  -e DB_PASSWORD=root \
+  ghcr.io/vernersmednis/tickets:latest
 ```
+
+> **Note:** For the latest version/tag, check [GitHub Packages](https://github.com/vernersmednis/tickets/pkgs/container/tickets) and replace `latest` with the specific tag if needed or if the pull command doesn't work (not found error).
 
 Then open [http://localhost:8000](http://localhost:8000) in your browser. That's it!
 
