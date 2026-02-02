@@ -29,8 +29,13 @@ Just pull and run — no PHP, Composer, or Node.js needed on your computer:
 docker pull ghcr.io/vernersmednis/tickets:latest
 
 # Run with your environment variables (adjust DB credentials as needed)
+# First, generate your APP_KEY:
+# Linux/Mac: echo "base64:$(openssl rand -base64 32)"
+# Windows: Open PowerShell and run: "base64:" + [Convert]::ToBase64String((1..32 | ForEach-Object { Get-Random -Maximum 256 }))
+# Then replace YOUR_APP_KEY_HERE below with the generated key (including the base64: prefix)
+
 docker run -p 8000:80 \
-  -e APP_KEY=base64:xxxxxxxxx+x/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx= \
+  -e APP_KEY=base64:YOUR_APP_KEY_HERE \
   -e APP_ENV=local \
   -e APP_DEBUG=false \
   -e DB_CONNECTION=mysql \
@@ -40,6 +45,12 @@ docker run -p 8000:80 \
   -e DB_USERNAME=root \
   -e DB_PASSWORD=root \
   ghcr.io/vernersmednis/tickets:latest
+
+# Option 2: Use a pre-generated key (less secure, but works)
+# APP_KEY=base64:abcd1234efgh5678ijkl9012mnop3456qrst7890uvwx
+
+# Option 3: Use docker-compose (handles key generation automatically)
+docker-compose up --build
 ```
 
 > **Note:** For the latest version/tag, check [GitHub Packages](https://github.com/vernersmednis/tickets/pkgs/container/tickets) and replace `latest` with the specific tag if needed or if the pull command doesn't work (not found error).
