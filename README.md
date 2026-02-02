@@ -38,17 +38,7 @@ docker pull ghcr.io/vernersmednis/tickets:latest
 # Windows: Open PowerShell and run: "base64:" + [Convert]::ToBase64String((1..32 | ForEach-Object { Get-Random -Maximum 256 }))
 # Then replace YOUR_APP_KEY_HERE below with the generated key (including the base64: prefix)
 
-docker run -p 8000:80 \
-  -e APP_KEY=base64:YOUR_APP_KEY_HERE \
-  -e APP_ENV=local \
-  -e APP_DEBUG=false \
-  -e DB_CONNECTION=mysql \
-  -e DB_HOST=host.docker.internal \
-  -e DB_PORT=3306 \
-  -e DB_DATABASE=tickets \
-  -e DB_USERNAME=root \
-  -e DB_PASSWORD=root \
-  ghcr.io/vernersmednis/tickets:latest
+docker run -p 8000:80 APP_KEY=base64:YOUR_APP_KEY_HERE APP_ENV=local APP_DEBUG=false  DB_CONNECTION=mysql DB_HOST=host.docker.internal DB_PORT=3306 DB_DATABASE=tickets  DB_USERNAME=root DB_PASSWORD=root ghcr.io/vernersmednis/tickets:latest
 
 # Option 2: Use a pre-generated key (less secure, but works)
 # APP_KEY=base64:abcd1234efgh5678ijkl9012mnop3456qrst7890uvwx
